@@ -14,7 +14,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.sql.*;
@@ -32,10 +31,8 @@ public class Main {
 
     private static void unzip(String zipFilePath, String destDir) {
         File dir = new File(destDir);
-        // create output directory if it doesn't exist
         if (!dir.exists()) dir.mkdirs();
         FileInputStream fis;
-        //buffer for read and write data to file
         byte[] buffer = new byte[1024];
         try {
             fis = new FileInputStream(zipFilePath);
@@ -46,7 +43,6 @@ public class Main {
                 File newFile = new File(destDir + File.separator + fileName);
                 XML_FILE = newFile;
                 System.out.println("Unzipping to " + newFile.getAbsolutePath());
-                //create directories for sub directories in zip
                 new File(newFile.getParent()).mkdirs();
                 FileOutputStream fos = new FileOutputStream(newFile);
                 int len;
@@ -54,11 +50,9 @@ public class Main {
                     fos.write(buffer, 0, len);
                 }
                 fos.close();
-                //close this ZipEntry
                 zis.closeEntry();
                 ze = zis.getNextEntry();
             }
-            //close last ZipEntry
             zis.closeEntry();
             zis.close();
             fis.close();
@@ -129,6 +123,8 @@ public class Main {
             NodeList nList = document.getElementsByTagName("vf:Obec");
             NodeList nList2 = document.getElementsByTagName("vf:CastObce");
             int code = 0;
+
+            //prvni tabulka
             for (int i = 0; i < nList.getLength(); i++) {
                 Node nNode = nList.item(i);
                 System.out.println("NOde name " + nNode.getNodeName() + " " + (i + 1));
@@ -140,15 +136,13 @@ public class Main {
                 }
             }
 
+            //druha tabulka
             for (int i = 0; i < nList2.getLength(); i++) {
                 Node nNode = nList2.item(i);
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
                     m.insertToSecondTable(Integer.parseInt(eElement.getElementsByTagName("coi:Kod").item(0).getTextContent()),
                             eElement.getElementsByTagName("coi:Nazev").item(0).getTextContent(), code);
-
-
-
                 }
             }
 
